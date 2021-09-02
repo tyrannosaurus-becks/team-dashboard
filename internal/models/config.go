@@ -1,5 +1,6 @@
 package models
 
 type Config struct {
-	// TODO
+	DatadogClientAPIKey string
+	DatadogClientAppKey string
 }

@@ -1,5 +1,14 @@
 package models
 
+type MetricType string
+const (
+	Count MetricType = "count"
+	Gauge MetricType = "gauge"
+	Rate MetricType = "rate"
+)
+
 type Metric interface {
-	Collect() (float64, error)
+	Name() string
+	Type() MetricType
+	Value() (float64, error)
 }
