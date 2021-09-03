@@ -15,10 +15,6 @@ func (s *securityCheckCoverage) Name() string {
 	return "security-check-coverage"
 }
 
-func (s *securityCheckCoverage) Type() models.MetricType {
-	return models.Gauge
-}
-
 func (s *securityCheckCoverage) Value() (float64, error) {
 	// TODO
 	return 0, nil

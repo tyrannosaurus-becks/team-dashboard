@@ -15,9 +15,7 @@ func (s *developerSatisfaction) Name() string {
 	return "developer-satisfaction"
 }
 
-func (s *developerSatisfaction) Type() models.MetricType {
-	return models.Gauge
-}
+
 
 func (s *developerSatisfaction) Value() (float64, error) {
 	// TODO

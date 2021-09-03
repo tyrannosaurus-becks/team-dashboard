@@ -15,10 +15,6 @@ func (s *infraCostPerBooking) Name() string {
 	return "infrastructure-cost-per-booking"
 }
 
-func (s *infraCostPerBooking) Type() models.MetricType {
-	return models.Gauge
-}
-
 func (s *infraCostPerBooking) Value() (float64, error) {
 	// TODO
 	return 0, nil

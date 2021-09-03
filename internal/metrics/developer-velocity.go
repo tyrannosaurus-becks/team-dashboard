@@ -36,10 +36,6 @@ func (s *developerVelocity) Name() string {
 	return "developer-velocity"
 }
 
-func (s *developerVelocity) Type() models.MetricType {
-	return models.Gauge
-}
-
 func (s *developerVelocity) Value() (float64, error) {
 	// How many PRs were merged 1-2 days ago?
 	now := time.Now().UTC()

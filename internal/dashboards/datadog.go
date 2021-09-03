@@ -2,7 +2,6 @@ package dashboards
 
 import (
 	"context"
-
 	dd "github.com/DataDog/datadog-api-client-go/api/v1/datadog"
 	"github.com/tyrannosaurus-becks/team-dashboard/internal/models"
 )
@@ -39,17 +38,9 @@ func (d *datadog) Send(metrics []models.Metric) error {
 		if err != nil {
 			return err
 		}
-		if _, _, err := d.apiClient.MetricsApi.SubmitMetrics(d.ctx, dd.MetricsPayload{
-			Series: []dd.Series{
-				{
-					Metric: "platform.dashboard." + metric.Name(),
-					Points: [][]float64{
-						{value},
-					},
-					Type: dd.PtrString(string(metric.Type())),
-				},
-			},
-		}); err != nil {
+		if _, _, err := d.apiClient.MetricsApi.SubmitMetrics(d.ctx, *dd.NewMetricsPayload(
+			[]dd.Series{*dd.NewSeries(metric.Name(), [][]float64{{value}})}),
+		); err != nil {
 			return err
 		}
 	}

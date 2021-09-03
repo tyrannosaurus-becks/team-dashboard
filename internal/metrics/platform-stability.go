@@ -15,10 +15,6 @@ func (s *platformStability) Name() string {
 	return "platform-stability"
 }
 
-func (s *platformStability) Type() models.MetricType {
-	return models.Gauge
-}
-
 func (s *platformStability) Value() (float64, error) {
 	// TODO
 	return 0, nil
