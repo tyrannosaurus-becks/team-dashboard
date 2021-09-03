@@ -1,8 +1,13 @@
 package models
 
 type Config struct {
-	DatadogClientAPIKey string
-	DatadogClientAppKey string
+	// Datadog.
+	DatadogClientAPIKey string `envconfig:"datadog_client_api_key"`
+	DatadogClientAppKey string `envconfig:"datadog_client_app_key"`
 
-	GithubAccessToken string
+	// Github.
+	GithubAccessToken string `envconfig:"github_access_token"`
+	HipcampOrgID      int64  `envconfig:"hipcamp_org_id"`
+	EngineeringTeamID int64  `envconfig:"engineering_team_id"`
+	PlatformTeamID    int64  `envconfig:"platform_team_id"`
 }

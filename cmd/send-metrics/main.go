@@ -2,18 +2,18 @@ package main
 
 import (
 	"log"
-	"os"
 
+	"github.com/kelseyhightower/envconfig"
 	"github.com/tyrannosaurus-becks/team-dashboard/internal"
 	"github.com/tyrannosaurus-becks/team-dashboard/internal/models"
 )
 
 func main() {
-	if err := internal.Run(&models.Config{
-		DatadogClientAPIKey: os.Getenv("DD_CLIENT_API_KEY"),
-		DatadogClientAppKey: os.Getenv("DD_CLIENT_APP_KEY"),
-		GithubAccessToken:   os.Getenv("GITHUB_ACCESS_TOKEN"),
-	}); err != nil {
+	var config models.Config
+	if err := envconfig.Process("dashboard", &config); err != nil {
+		log.Fatal(err)
+	}
+	if err := internal.Run(&config); err != nil {
 		log.Fatal(err)
 	}
 }

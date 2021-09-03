@@ -12,13 +12,8 @@ import (
 )
 
 const (
-	// TODO - fill in real values
-	// TODO make into configuration
-	hipcampOrgID      = 0
-	engineeringTeamID = 0
-	platformTeamID    = 0
-	query             = "author:$username created:$day_before_yesterday..$yesterday"
-	timeFormat        = "2006-01-02"
+	query      = "author:$username created:$day_before_yesterday..$yesterday"
+	timeFormat = "2006-01-02"
 )
 
 func newDeveloperVelocity(config *models.Config) *developerVelocity {
@@ -28,11 +23,13 @@ func newDeveloperVelocity(config *models.Config) *developerVelocity {
 	)
 	tc := oauth2.NewClient(ctx, ts)
 	return &developerVelocity{
+		config:   config,
 		ghClient: github.NewClient(tc),
 	}
 }
 
 type developerVelocity struct {
+	config   *models.Config
 	ghClient *github.Client
 }
 
@@ -70,14 +67,14 @@ func (s *developerVelocity) Value() (float64, error) {
 
 func (s *developerVelocity) getApplicationDevelopers() ([]*github.User, error) {
 	appDevs := make(map[int64]*github.User)
-	engineers, _, err := s.ghClient.Teams.ListTeamMembersByID(context.Background(), hipcampOrgID, engineeringTeamID, nil)
+	engineers, _, err := s.ghClient.Teams.ListTeamMembersByID(context.Background(), s.config.HipcampOrgID, s.config.EngineeringTeamID, nil)
 	if err != nil {
 		return nil, err
 	}
 	for _, engineer := range engineers {
 		appDevs[*engineer.ID] = engineer
 	}
-	platformDevs, _, err := s.ghClient.Teams.ListTeamMembersByID(context.Background(), hipcampOrgID, platformTeamID, nil)
+	platformDevs, _, err := s.ghClient.Teams.ListTeamMembersByID(context.Background(), s.config.HipcampOrgID, s.config.PlatformTeamID, nil)
 	if err != nil {
 		return nil, err
 	}
