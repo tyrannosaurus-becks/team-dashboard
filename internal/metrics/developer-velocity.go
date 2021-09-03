@@ -44,7 +44,7 @@ func (s *developerVelocity) Value() (float64, error) {
 
 	q := strings.ReplaceAll(query, "$day_before_yesterday", dayBeforeYesterday)
 	q = strings.ReplaceAll(q, "$yesterday", yesterday)
-	issueSearchResult, _, err := s.ghClient.Search.Issues(context.Background(), "org:hipcamp updated:2021-09-01..2021-09-02 is:pr is:merged", nil)
+	issueSearchResult, _, err := s.ghClient.Search.Issues(context.Background(), q, nil)
 	if err != nil {
 		return 0, err
 	}
