@@ -23,13 +23,13 @@ func newDatadog(config *models.Config) *datadog {
 	configuration := dd.NewConfiguration()
 	apiClient := dd.NewAPIClient(configuration)
 	return &datadog{
-		ctx: ctx,
+		ctx:       ctx,
 		apiClient: apiClient,
 	}
 }
 
 type datadog struct {
-	ctx context.Context
+	ctx       context.Context
 	apiClient *dd.APIClient
 }
 

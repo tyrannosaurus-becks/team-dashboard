@@ -1,10 +1,11 @@
 package models
 
 type MetricType string
+
 const (
 	Count MetricType = "count"
 	Gauge MetricType = "gauge"
-	Rate MetricType = "rate"
+	Rate  MetricType = "rate"
 )
 
 type Metric interface {

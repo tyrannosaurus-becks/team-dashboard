@@ -18,7 +18,7 @@ const (
 	engineeringTeamID = 0
 	platformTeamID    = 0
 	query             = "author:$username created:$day_before_yesterday..$yesterday"
-	timeFormat = "2006-01-02"
+	timeFormat        = "2006-01-02"
 )
 
 func newDeveloperVelocity(config *models.Config) *developerVelocity {
