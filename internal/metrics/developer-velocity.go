@@ -2,7 +2,6 @@ package metrics
 
 import (
 	"context"
-	"fmt"
 	"strings"
 	"time"
 
@@ -12,7 +11,7 @@ import (
 )
 
 const (
-	query      = "author:$username created:$day_before_yesterday..$yesterday"
+	query      = "org:hipcamp updated:$day_before_yesterday..$yesterday is:pr is:merged"
 	timeFormat = "2006-01-02"
 )
 
@@ -42,67 +41,50 @@ func (s *developerVelocity) Type() models.MetricType {
 }
 
 func (s *developerVelocity) Value() (float64, error) {
-	// This will look in Github for the number of PRs per day from members
-	// of the engineering team who are NOT on the platform engineering team.
-	appDevs, err := s.getApplicationDevelopers()
+	// How many PRs were merged 1-2 days ago?
+	now := time.Now().UTC()
+	dayBeforeYesterday := now.Add(-48 * time.Hour).Format(timeFormat)
+	yesterday := now.Add(-24 * time.Hour).Format(timeFormat)
+
+	q := strings.ReplaceAll(query, "$day_before_yesterday", dayBeforeYesterday)
+	q = strings.ReplaceAll(q, "$yesterday", yesterday)
+	issueSearchResult, _, err := s.ghClient.Search.Issues(context.Background(), "org:hipcamp updated:2021-09-01..2021-09-02 is:pr is:merged", nil)
 	if err != nil {
 		return 0, err
 	}
 
-	now := time.Now().UTC()
-	dayBeforeYesterday := now.Add(-24 * time.Hour).Format(timeFormat)
-	yesterday := now.Add(-24 * time.Hour).Format(timeFormat)
-
-	totalCommits := 0
-	for _, appDev := range appDevs {
-		numCommitsForDev, err := s.numCommitsToMain(appDev, dayBeforeYesterday, yesterday)
-		if err != nil {
-			return 0, err
-		}
-		totalCommits += numCommitsForDev
+	// Who are our platform devs?
+	platformDevs, _, err := s.ghClient.Teams.ListTeamMembersByID(context.Background(), s.config.HipcampOrgID, s.config.PlatformTeamID, nil)
+	if err != nil {
+		return 0, err
 	}
-	velocity := float64(totalCommits) / float64(len(appDevs))
+
+	// How many commits were NOT made by platform developers?
+	numCommitsByAppDevs := len(issueSearchResult.Issues)
+	for _, issue := range issueSearchResult.Issues {
+		if isFromPlatformDeveloper(issue, platformDevs) {
+			numCommitsByAppDevs--
+		}
+	}
+
+	// How many engineers are on the team?
+	engineers, _, err := s.ghClient.Teams.ListTeamMembersByID(context.Background(), s.config.HipcampOrgID, s.config.EngineeringTeamID, nil)
+	if err != nil {
+		return 0, err
+	}
+
+	// So then, how many of the team are application developers?
+	numAppDevs := len(engineers) - len(platformDevs)
+	velocity := float64(numCommitsByAppDevs) / float64(numAppDevs)
 	return velocity, nil
 }
 
-func (s *developerVelocity) getApplicationDevelopers() ([]*github.User, error) {
-	appDevs := make(map[int64]*github.User)
-	engineers, _, err := s.ghClient.Teams.ListTeamMembersByID(context.Background(), s.config.HipcampOrgID, s.config.EngineeringTeamID, nil)
-	if err != nil {
-		return nil, err
-	}
-	for _, engineer := range engineers {
-		appDevs[*engineer.ID] = engineer
-	}
-	platformDevs, _, err := s.ghClient.Teams.ListTeamMembersByID(context.Background(), s.config.HipcampOrgID, s.config.PlatformTeamID, nil)
-	if err != nil {
-		return nil, err
-	}
+func isFromPlatformDeveloper(issue *github.Issue, platformDevs []*github.User) bool {
+	author := *issue.User.Login
 	for _, platformDev := range platformDevs {
-		delete(appDevs, *platformDev.ID)
+		if *platformDev.Login == author {
+			return true
+		}
 	}
-	ret := make([]*github.User, len(appDevs))
-	i := 0
-	for _, appDev := range appDevs {
-		ret[i] = appDev
-		i++
-	}
-	return ret, nil
-}
-
-func (s *developerVelocity) numCommitsToMain(user *github.User, dayBeforeYesterday, yesterday string) (int, error) {
-	if user.Name == nil || *user.Name == "" {
-		return 0, fmt.Errorf("no username in %+v", user)
-	}
-	q := strings.ReplaceAll(query, "$username", *user.Name)
-	q = strings.ReplaceAll(q, "$day_before_yesterday", dayBeforeYesterday)
-	q = strings.ReplaceAll(q, "$yesterday", yesterday)
-	commitSearchResult, _, err := s.ghClient.Search.Commits(context.Background(), q, nil)
-	if err != nil {
-		return 0, err
-	}
-	if commitSearchResult == nil || commitSearchResult.Total == nil {
-		return 0, nil
-	}
-	return *commitSearchResult.Total, nil
+	return false
 }
