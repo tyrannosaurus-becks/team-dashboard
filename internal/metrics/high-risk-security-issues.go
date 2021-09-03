@@ -21,5 +21,6 @@ func (s *highRiskSecurityIssues) Type() models.MetricType {
 
 func (s *highRiskSecurityIssues) Value() (float64, error) {
 	// TODO
+	// This will look in Asana for anything in the platform team tagged with "high-risk-security-issue".
 	return 0, nil
 }
