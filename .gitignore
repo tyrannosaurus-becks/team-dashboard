@@ -19,3 +19,6 @@ vendor/
 
 # Config
 config
+
+# Local file output
+metrics.csv
