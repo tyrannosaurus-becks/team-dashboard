@@ -9,4 +9,7 @@ type Config struct {
 	HipcampOrgID      int64  `envconfig:"hipcamp_org_id"`
 	EngineeringTeamID int64  `envconfig:"engineering_team_id"`
 	PlatformTeamID    int64  `envconfig:"platform_team_id"`
+
+	// Asana.
+	AsanaPersonalAccessToken string `envconfig:"asana_personal_access_token"`
 }

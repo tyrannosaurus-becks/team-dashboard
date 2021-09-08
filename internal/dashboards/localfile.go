@@ -10,7 +10,7 @@ import (
 
 const fileName = "metrics.csv"
 
-type localFile struct {}
+type localFile struct{}
 
 func (f *localFile) Send(metrics []models.Metric) error {
 	file, err := os.OpenFile(fileName, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)

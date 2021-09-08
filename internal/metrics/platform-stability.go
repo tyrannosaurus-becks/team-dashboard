@@ -1,14 +1,20 @@
 package metrics
 
-import "github.com/tyrannosaurus-becks/team-dashboard/internal/models"
+import (
+	"github.com/tyrannosaurus-becks/team-dashboard/internal/clients"
+	"github.com/tyrannosaurus-becks/team-dashboard/internal/models"
+)
 
 func newPlatformStability(config *models.Config) *platformStability {
-	// TODO
-	return &platformStability{}
+	return &platformStability{
+		client: &clients.Asana{
+			PersonalAccessToken: config.AsanaPersonalAccessToken,
+		},
+	}
 }
 
 type platformStability struct {
-	// TODO
+	client *clients.Asana
 }
 
 func (s *platformStability) Name() string {
@@ -16,6 +22,7 @@ func (s *platformStability) Name() string {
 }
 
 func (s *platformStability) Value() (float64, error) {
-	// TODO
+	// TODO - return a count of all tickets that are Type == Bug and Priority == P0 and open,
+	// that were created in the last week.
 	return 0, nil
 }

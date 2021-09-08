@@ -15,8 +15,6 @@ func (s *developerSatisfaction) Name() string {
 	return "developer-satisfaction"
 }
 
-
-
 func (s *developerSatisfaction) Value() (float64, error) {
 	// TODO
 	// This will look in Google sheets for the present result of the survey

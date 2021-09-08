@@ -39,7 +39,7 @@ func (d *datadog) Send(metrics []models.Metric) error {
 			return err
 		}
 		if _, _, err := d.apiClient.MetricsApi.SubmitMetrics(d.ctx, *dd.NewMetricsPayload(
-			[]dd.Series{*dd.NewSeries("platform.dashboard." + metric.Name(), [][]float64{
+			[]dd.Series{*dd.NewSeries("platform.dashboard."+metric.Name(), [][]float64{
 				{toDatadogTime(now), value},
 			})}),
 		); err != nil {
