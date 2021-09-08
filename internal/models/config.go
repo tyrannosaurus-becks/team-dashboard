@@ -3,7 +3,6 @@ package models
 type Config struct {
 	// Datadog.
 	DatadogClientAPIKey string `envconfig:"datadog_client_api_key"`
-	DatadogClientAppKey string `envconfig:"datadog_client_app_key"`
 
 	// Github.
 	GithubAccessToken string `envconfig:"github_access_token"`
