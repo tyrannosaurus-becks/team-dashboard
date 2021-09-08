@@ -15,6 +15,7 @@ var window = -7 * 24 * time.Hour
 
 func newPlatformStability(config *models.Config) *platformStability {
 	return &platformStability{
+		config: config,
 		client: &clients.Asana{
 			PersonalAccessToken: config.AsanaPersonalAccessToken,
 		},
@@ -31,14 +32,14 @@ func (s *platformStability) Name() string {
 }
 
 func (s *platformStability) Value() (float64, error) {
-	queryParams := url.Values{}
+	queryParams := &url.Values{}
 	queryParams.Add("teams.any", s.config.AsanaPlatformTeamGid)
 	queryParams.Add("completed", "false")
-	queryParams.Add(fmt.Sprintf("custom_fields.%s.value", s.config.AsanaTypeFieldGid), "Bug")
-	queryParams.Add(fmt.Sprintf("custom_fields.%s.value", s.config.AsanaPriorityFieldGid), "P0")
-	queryParams.Add("created_on.after", time.Now().UTC().Add(window).Format(time.RFC3339))
+	queryParams.Add(fmt.Sprintf("custom_fields.%s.value", s.config.AsanaTypeFieldGid), "1184099641533292") // Bug.
+	queryParams.Add(fmt.Sprintf("custom_fields.%s.value", s.config.AsanaPriorityFieldGid), "1178622795592966") // P0.
+	queryParams.Add("created_on.after", time.Now().UTC().Add(window).Format(yyyymmdd))
 
-	tasks, err := s.client.SearchTasks(s.config.AsanaWorkspaceGid, queryParams)
+	tasks, err := s.client.SearchTasks(s.config.AsanaWorkspaceGid, *queryParams)
 	if err != nil {
 		return 0, err
 	}

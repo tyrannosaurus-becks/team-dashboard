@@ -11,6 +11,7 @@ import (
 
 func newHighRiskSecurityIssues(config *models.Config) *highRiskSecurityIssues {
 	return &highRiskSecurityIssues{
+		config: config,
 		client: &clients.Asana{
 			PersonalAccessToken: config.AsanaPersonalAccessToken,
 		},
@@ -27,13 +28,13 @@ func (s *highRiskSecurityIssues) Name() string {
 }
 
 func (s *highRiskSecurityIssues) Value() (float64, error) {
-	queryParams := url.Values{}
+	queryParams := &url.Values{}
 	queryParams.Add("teams.any", s.config.AsanaPlatformTeamGid)
 	queryParams.Add("completed", "false")
-	queryParams.Add(fmt.Sprintf("custom_fields.%s.value", s.config.AsanaTypeFieldGid), "Security")
-	queryParams.Add(fmt.Sprintf("custom_fields.%s.value", s.config.AsanaPriorityFieldGid), "P0")
+	queryParams.Add(fmt.Sprintf("custom_fields.%s.value", s.config.AsanaTypeFieldGid), "1200742202724069") // Security.
+	queryParams.Add(fmt.Sprintf("custom_fields.%s.value", s.config.AsanaPriorityFieldGid), "1178622795592966") // P0.
 
-	tasks, err := s.client.SearchTasks(s.config.AsanaWorkspaceGid, queryParams)
+	tasks, err := s.client.SearchTasks(s.config.AsanaWorkspaceGid, *queryParams)
 	if err != nil {
 		return 0, err
 	}

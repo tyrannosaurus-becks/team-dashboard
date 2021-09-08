@@ -8,10 +8,7 @@ import (
 	"net/url"
 )
 
-const (
-	baseURL = "https://app.asana.com/api/1.0/"
-	limit   = 20 // results per page
-)
+const baseURL = "https://app.asana.com/api/1.0/"
 
 type Asana struct {
 	PersonalAccessToken string
@@ -65,7 +62,7 @@ func (a *Asana) submitRequest(url string, ret interface{}) error {
 }
 
 func getUrl(endpoint string) string {
-	return fmt.Sprintf("%s%s?limit=%d", baseURL, endpoint, limit)
+	return fmt.Sprintf("%s%s", baseURL, endpoint)
 }
 
 type Task struct {

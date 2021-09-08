@@ -15,5 +15,5 @@ type Config struct {
 	AsanaWorkspaceGid        string `envconfig:"asana_workspace_gid"`
 	AsanaPlatformTeamGid     string `envconfig:"asana_platform_team_gid"`
 	AsanaTypeFieldGid        string `envconfig:"asana_type_field_gid"`
-	AsanaPriorityFieldGid    string `envconvig:"asana_priority_field_gid"`
+	AsanaPriorityFieldGid    string `envconfig:"asana_priority_field_gid"`
 }
