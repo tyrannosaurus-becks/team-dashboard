@@ -19,38 +19,55 @@ type Asana struct {
 // ListProjects hits https://developers.asana.com/docs/get-a-teams-projects
 func (a *Asana) ListProjects(teamGid string) ([]*Project, error) {
 	endpoint := fmt.Sprintf("teams/%s/projects", teamGid)
-	method := http.MethodGet
 
-	resp := &struct {
-		Data     []*Project `json:"data"`
-		NextPage *NextPage  `json:"next_page"`
-	}{}
-	if err := a.submitRequest(endpoint, method, resp); err != nil {
-		return nil, err
+	var projects []*Project
+	u := url(endpoint)
+	for {
+		resp := &struct {
+			Data     []*Project `json:"data"`
+			NextPage *NextPage  `json:"next_page"`
+		}{}
+		if err := a.submitRequest(u, resp); err != nil {
+			return nil, err
+		}
+		projects = append(projects, resp.Data...)
+		if resp.NextPage == nil {
+			break
+		}
+		u = resp.NextPage.URI
 	}
-	// TODO paginate.
-	return resp.Data, nil
+	return projects, nil
 }
 
 // ListTasks hits https://developers.asana.com/docs/get-tasks-from-a-project
 func (a *Asana) ListTasks(projectGid string) ([]*Task, error) {
 	endpoint := fmt.Sprintf("projects/%s/tasks", projectGid)
-	method := http.MethodGet
 
-	resp := &struct {
-		Data     []*Task   `json:"data"`
-		NextPage *NextPage `json:"next_page"`
-	}{}
-	if err := a.submitRequest(endpoint, method, resp); err != nil {
-		return nil, err
+	var tasks []*Task
+	u := url(endpoint)
+	for {
+		resp := &struct {
+			Data     []*Task   `json:"data"`
+			NextPage *NextPage `json:"next_page"`
+		}{}
+		if err := a.submitRequest(u, resp); err != nil {
+			return nil, err
+		}
+		tasks = append(tasks, resp.Data...)
+		if resp.NextPage == nil {
+			break
+		}
+		u = resp.NextPage.URI
 	}
-	// TODO paginate.
-	return resp.Data, nil
+	return tasks, nil
 }
 
-func (a *Asana) submitRequest(endpoint, method string, ret interface{}) error {
-	u := fmt.Sprintf("%s%s?limit=%d", baseURL, endpoint, limit)
-	req, err := http.NewRequest(method, u, nil)
+func url(endpoint string) string {
+	return fmt.Sprintf("%s%s?limit=%d", baseURL, endpoint, limit)
+}
+
+func (a *Asana) submitRequest(url string, ret interface{}) error {
+	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return err
 	}
@@ -74,11 +91,13 @@ func (a *Asana) submitRequest(endpoint, method string, ret interface{}) error {
 }
 
 type Project struct {
-	// TODO
+	GID  string `json:"gid"`
+	Name string `json:"name"`
 }
 
 type Task struct {
-	// TODO
+	GID  string `json:"gid"`
+	Name string `json:"name"`
 }
 
 type NextPage struct {
