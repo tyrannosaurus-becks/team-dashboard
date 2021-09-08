@@ -1,6 +1,9 @@
 package metrics
 
 import (
+	"fmt"
+	"net/url"
+
 	"github.com/tyrannosaurus-becks/team-dashboard/internal/clients"
 	"github.com/tyrannosaurus-becks/team-dashboard/internal/models"
 )
@@ -14,6 +17,7 @@ func newHighRiskSecurityIssues(config *models.Config) *highRiskSecurityIssues {
 }
 
 type highRiskSecurityIssues struct {
+	config *models.Config
 	client *clients.Asana
 }
 
@@ -22,7 +26,15 @@ func (s *highRiskSecurityIssues) Name() string {
 }
 
 func (s *highRiskSecurityIssues) Value() (float64, error) {
-	// TODO - return a count of all tickets that are open and P0 and Type == Security.
-	// This will look in Asana for anything in the platform team tagged with "high-risk-security-issue".
-	return 0, nil
+	queryParams := url.Values{}
+	queryParams.Add("teams.any", s.config.AsanaPlatformTeamGid)
+	queryParams.Add("completed", "false")
+	queryParams.Add(fmt.Sprintf("custom_fields.%s.value", s.config.AsanaTypeFieldGid), "Security")
+	queryParams.Add(fmt.Sprintf("custom_fields.%s.value", s.config.AsanaPriorityFieldGid), "P0")
+
+	tasks, err := s.client.SearchTasks(s.config.AsanaWorkspaceGid, queryParams)
+	if err != nil {
+		return 0, err
+	}
+	return float64(len(tasks)), nil
 }

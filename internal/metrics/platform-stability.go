@@ -1,9 +1,16 @@
 package metrics
 
 import (
+	"fmt"
+	"net/url"
+	"time"
+
 	"github.com/tyrannosaurus-becks/team-dashboard/internal/clients"
 	"github.com/tyrannosaurus-becks/team-dashboard/internal/models"
 )
+
+// The last 7 days.
+var window = -7 * 24 * time.Hour
 
 func newPlatformStability(config *models.Config) *platformStability {
 	return &platformStability{
@@ -14,6 +21,7 @@ func newPlatformStability(config *models.Config) *platformStability {
 }
 
 type platformStability struct {
+	config *models.Config
 	client *clients.Asana
 }
 
@@ -22,7 +30,16 @@ func (s *platformStability) Name() string {
 }
 
 func (s *platformStability) Value() (float64, error) {
-	// TODO - return a count of all tickets that are Type == Bug and Priority == P0 and open,
-	// that were created in the last week.
-	return 0, nil
+	queryParams := url.Values{}
+	queryParams.Add("teams.any", s.config.AsanaPlatformTeamGid)
+	queryParams.Add("completed", "false")
+	queryParams.Add(fmt.Sprintf("custom_fields.%s.value", s.config.AsanaTypeFieldGid), "Bug")
+	queryParams.Add(fmt.Sprintf("custom_fields.%s.value", s.config.AsanaPriorityFieldGid), "P0")
+	queryParams.Add("created_on.after", time.Now().UTC().Add(window).Format(time.RFC3339))
+
+	tasks, err := s.client.SearchTasks(s.config.AsanaWorkspaceGid, queryParams)
+	if err != nil {
+		return 0, err
+	}
+	return float64(len(tasks)), nil
 }

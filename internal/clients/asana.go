@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 )
 
 const (
@@ -16,35 +17,12 @@ type Asana struct {
 	PersonalAccessToken string
 }
 
-// ListProjects hits https://developers.asana.com/docs/get-a-teams-projects
-func (a *Asana) ListProjects(teamGid string) ([]*Project, error) {
-	endpoint := fmt.Sprintf("teams/%s/projects", teamGid)
-
-	var projects []*Project
-	u := url(endpoint)
-	for {
-		resp := &struct {
-			Data     []*Project `json:"data"`
-			NextPage *NextPage  `json:"next_page"`
-		}{}
-		if err := a.submitRequest(u, resp); err != nil {
-			return nil, err
-		}
-		projects = append(projects, resp.Data...)
-		if resp.NextPage == nil {
-			break
-		}
-		u = resp.NextPage.URI
-	}
-	return projects, nil
-}
-
-// ListTasks hits https://developers.asana.com/docs/get-tasks-from-a-project
-func (a *Asana) ListTasks(projectGid string) ([]*Task, error) {
-	endpoint := fmt.Sprintf("projects/%s/tasks", projectGid)
+// SearchTasks hits https://developers.asana.com/docs/search-tasks-in-a-workspace
+func (a *Asana) SearchTasks(workspaceGid string, queryParams url.Values) ([]*Task, error) {
+	endpoint := fmt.Sprintf("workspaces/%s/tasks/search", workspaceGid)
 
 	var tasks []*Task
-	u := url(endpoint)
+	u := getUrl(endpoint) + "?" + queryParams.Encode()
 	for {
 		resp := &struct {
 			Data     []*Task   `json:"data"`
@@ -60,10 +38,6 @@ func (a *Asana) ListTasks(projectGid string) ([]*Task, error) {
 		u = resp.NextPage.URI
 	}
 	return tasks, nil
-}
-
-func url(endpoint string) string {
-	return fmt.Sprintf("%s%s?limit=%d", baseURL, endpoint, limit)
 }
 
 func (a *Asana) submitRequest(url string, ret interface{}) error {
@@ -90,9 +64,8 @@ func (a *Asana) submitRequest(url string, ret interface{}) error {
 	return json.NewDecoder(resp.Body).Decode(ret)
 }
 
-type Project struct {
-	GID  string `json:"gid"`
-	Name string `json:"name"`
+func getUrl(endpoint string) string {
+	return fmt.Sprintf("%s%s?limit=%d", baseURL, endpoint, limit)
 }
 
 type Task struct {
