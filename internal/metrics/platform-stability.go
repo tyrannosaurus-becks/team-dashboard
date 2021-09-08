@@ -2,6 +2,7 @@ package metrics
 
 import (
 	"fmt"
+	"log"
 	"net/url"
 	"time"
 
@@ -40,6 +41,10 @@ func (s *platformStability) Value() (float64, error) {
 	tasks, err := s.client.SearchTasks(s.config.AsanaWorkspaceGid, queryParams)
 	if err != nil {
 		return 0, err
+	}
+	log.Println("------------- P0 Platform bugs with the last week -------------")
+	for _, task := range tasks {
+		log.Println(fmt.Sprintf("gid: %s, name: %s", task.GID, task.Name))
 	}
 	return float64(len(tasks)), nil
 }

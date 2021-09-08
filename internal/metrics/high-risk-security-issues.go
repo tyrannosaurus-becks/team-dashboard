@@ -2,6 +2,7 @@ package metrics
 
 import (
 	"fmt"
+	"log"
 	"net/url"
 
 	"github.com/tyrannosaurus-becks/team-dashboard/internal/clients"
@@ -35,6 +36,10 @@ func (s *highRiskSecurityIssues) Value() (float64, error) {
 	tasks, err := s.client.SearchTasks(s.config.AsanaWorkspaceGid, queryParams)
 	if err != nil {
 		return 0, err
+	}
+	log.Println("------------- P0 Platform security issues -------------")
+	for _, task := range tasks {
+		log.Println(fmt.Sprintf("gid: %s, name: %s", task.GID, task.Name))
 	}
 	return float64(len(tasks)), nil
 }
