@@ -1,5 +1,5 @@
 package models
 
 type Dashboard interface {
-	Send(metrics []Metric) error
+	Send(metrics []*Metric) error
 }

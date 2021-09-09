@@ -2,15 +2,14 @@ package metrics
 
 import (
 	"fmt"
-	"log"
 	"net/url"
 
 	"github.com/tyrannosaurus-becks/team-dashboard/internal/clients"
 	"github.com/tyrannosaurus-becks/team-dashboard/internal/models"
 )
 
-func newHighRiskSecurityIssues(config *models.Config) *highRiskSecurityIssues {
-	return &highRiskSecurityIssues{
+func NewHighRiskSecurityIssues(config *models.Config) *HighRiskSecurityIssues {
+	return &HighRiskSecurityIssues{
 		config: config,
 		client: &clients.Asana{
 			PersonalAccessToken: config.AsanaPersonalAccessToken,
@@ -18,16 +17,12 @@ func newHighRiskSecurityIssues(config *models.Config) *highRiskSecurityIssues {
 	}
 }
 
-type highRiskSecurityIssues struct {
+type HighRiskSecurityIssues struct {
 	config *models.Config
 	client *clients.Asana
 }
 
-func (s *highRiskSecurityIssues) Name() string {
-	return "high-risk-security-issues"
-}
-
-func (s *highRiskSecurityIssues) Value() (float64, error) {
+func (s *HighRiskSecurityIssues) Calculate() ([]*models.Metric, error) {
 	queryParams := &url.Values{}
 	queryParams.Add("teams.any", s.config.AsanaPlatformTeamGid)
 	queryParams.Add("completed", "false")
@@ -36,11 +31,13 @@ func (s *highRiskSecurityIssues) Value() (float64, error) {
 
 	tasks, err := s.client.SearchTasks(s.config.AsanaWorkspaceGid, *queryParams)
 	if err != nil {
-		return 0, err
+		return nil, err
 	}
-	log.Println("------------- P0 Platform security issues -------------")
-	for _, task := range tasks {
-		log.Println(fmt.Sprintf("gid: %s, name: %s", task.GID, task.Name))
-	}
-	return float64(len(tasks)), nil
+	return []*models.Metric{
+		{
+			Name:  "num-high-risk-security-issues",
+			Value: float64(len(tasks)),
+			Tags:  nil,
+		},
+	}, nil
 }

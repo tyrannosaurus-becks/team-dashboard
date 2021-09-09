@@ -34,14 +34,10 @@ type datadog struct {
 func (d *datadog) Send(metrics []models.Metric) error {
 	now := time.Now().UTC()
 	for _, metric := range metrics {
-		value, err := metric.Value()
-		if err != nil {
-			return err
-		}
-		series := *dd.NewSeries("platform.dashboard."+metric.Name(), [][]float64{
-			{toDatadogTime(now), value},
+		series := *dd.NewSeries("platform.dashboard."+metric.Name, [][]float64{
+			{toDatadogTime(now), metric.Value},
 		})
-		series.Tags = metric.Tags()
+		series.Tags = metric.Tags
 		if _, _, err := d.apiClient.MetricsApi.SubmitMetrics(d.ctx, *dd.NewMetricsPayload(
 			[]dd.Series{series}),
 		); err != nil {

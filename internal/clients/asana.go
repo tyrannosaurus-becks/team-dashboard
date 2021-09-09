@@ -18,16 +18,16 @@ type Asana struct {
 }
 
 // SearchTasks hits https://developers.asana.com/docs/search-tasks-in-a-workspace
-func (a *Asana) SearchTasks(workspaceGid string, queryParams url.Values) ([]*Task, error) {
+func (a *Asana) SearchTasks(workspaceGid string, queryParams url.Values) ([]*ObjectMetadata, error) {
 	endpoint := fmt.Sprintf("workspaces/%s/tasks/search", workspaceGid)
 
-	var tasks []*Task
+	var tasks []*ObjectMetadata
 	queryParams.Add("limit", fmt.Sprintf("%d", limit))
 	u := getUrl(endpoint) + "?" + queryParams.Encode()
 	for {
 		resp := &struct {
-			Data     []*Task   `json:"data"`
-			NextPage *NextPage `json:"next_page"`
+			Data     []*ObjectMetadata `json:"data"`
+			NextPage *NextPage         `json:"next_page"`
 		}{}
 		if err := a.submitRequest(u, resp); err != nil {
 			return nil, err
@@ -39,6 +39,32 @@ func (a *Asana) SearchTasks(workspaceGid string, queryParams url.Values) ([]*Tas
 		u = resp.NextPage.URI
 	}
 	return tasks, nil
+}
+
+// GetTask hits https://developers.asana.com/docs/get-a-task
+func (a *Asana) GetTask(taskGid string) (*Task, error) {
+	endpoint := fmt.Sprintf("tasks/%s", taskGid)
+
+	resp := &struct {
+		Data *Task `json:"data"`
+	}{}
+	if err := a.submitRequest(getUrl(endpoint), resp); err != nil {
+		return nil, err
+	}
+	return resp.Data, nil
+}
+
+// GetProject hits https://developers.asana.com/docs/get-a-project
+func (a *Asana) GetProject(projectGid string) (*Project, error) {
+	endpoint := fmt.Sprintf("projects/%s", projectGid)
+
+	resp := &struct {
+		Data *Project `json:"data"`
+	}{}
+	if err := a.submitRequest(getUrl(endpoint), resp); err != nil {
+		return nil, err
+	}
+	return resp.Data, nil
 }
 
 func (a *Asana) submitRequest(url string, ret interface{}) error {
@@ -69,9 +95,17 @@ func getUrl(endpoint string) string {
 	return fmt.Sprintf("%s%s", baseURL, endpoint)
 }
 
-type Task struct {
+type ObjectMetadata struct {
 	GID  string `json:"gid"`
 	Name string `json:"name"`
+}
+
+type Task struct {
+	Projects []*ObjectMetadata `json:"projects"`
+}
+
+type Project struct {
+	Team *ObjectMetadata `json:"team"`
 }
 
 type NextPage struct {

@@ -6,51 +6,50 @@ import (
 	"time"
 
 	"github.com/google/go-github/v38/github"
-	"github.com/tyrannosaurus-becks/team-dashboard/internal/metrics/util"
 	"github.com/tyrannosaurus-becks/team-dashboard/internal/models"
 	"golang.org/x/oauth2"
 )
 
-const query = "org:hipcamp updated:$day_before_yesterday..$yesterday is:pr is:merged"
+const (
+	name       = "developer-velocity"
+	query      = "org:hipcamp updated:$day_before_yesterday..$yesterday is:pr is:merged"
+	timeFormat = "2006-01-02"
+)
 
-func newDeveloperVelocity(config *models.Config) *developerVelocity {
+func NewDeveloperVelocity(config *models.Config) *DeveloperVelocity {
 	ctx := context.Background()
 	ts := oauth2.StaticTokenSource(
 		&oauth2.Token{AccessToken: config.GithubAccessToken},
 	)
 	tc := oauth2.NewClient(ctx, ts)
-	return &developerVelocity{
+	return &DeveloperVelocity{
 		config:   config,
 		ghClient: github.NewClient(tc),
 	}
 }
 
-type developerVelocity struct {
+type DeveloperVelocity struct {
 	config   *models.Config
 	ghClient *github.Client
 }
 
-func (v *developerVelocity) Name() string {
-	return "developer-velocity"
-}
-
-func (v *developerVelocity) Value() (float64, error) {
+func (v *DeveloperVelocity) Calculate() ([]*models.Metric, error) {
 	// How many PRs were merged 1-2 days ago?
 	now := time.Now().UTC()
-	dayBeforeYesterday := now.Add(-48 * time.Hour).Format(util.YYYYMMDD)
-	yesterday := now.Add(-24 * time.Hour).Format(util.YYYYMMDD)
+	dayBeforeYesterday := now.Add(-48 * time.Hour).Format(timeFormat)
+	yesterday := now.Add(-24 * time.Hour).Format(timeFormat)
 
 	q := strings.ReplaceAll(query, "$day_before_yesterday", dayBeforeYesterday)
 	q = strings.ReplaceAll(q, "$yesterday", yesterday)
 	issueSearchResult, _, err := v.ghClient.Search.Issues(context.Background(), q, nil)
 	if err != nil {
-		return 0, err
+		return nil, err
 	}
 
 	// Who are our platform devs?
 	platformDevs, _, err := v.ghClient.Teams.ListTeamMembersByID(context.Background(), v.config.HipcampOrgID, v.config.PlatformTeamID, nil)
 	if err != nil {
-		return 0, err
+		return nil, err
 	}
 
 	// How many commits were NOT made by platform developers?
@@ -64,17 +63,30 @@ func (v *developerVelocity) Value() (float64, error) {
 	// How many engineers are on the team?
 	engineers, _, err := v.ghClient.Teams.ListTeamMembersByID(context.Background(), v.config.HipcampOrgID, v.config.EngineeringTeamID, nil)
 	if err != nil {
-		return 0, err
+		return nil, err
 	}
+
+	var ret []*models.Metric
 
 	// So then, how many of the team are application developers?
 	numAppDevs := len(engineers) - len(platformDevs)
-	velocity := float64(numCommitsByAppDevs) / float64(numAppDevs)
-	return velocity, nil
-}
+	appDevVelocity := float64(numCommitsByAppDevs) / float64(numAppDevs)
+	ret = append(ret, &models.Metric{
+		Name:  name,
+		Value: appDevVelocity,
+		Tags:  &[]string{"application developers"},
+	})
 
-func (v *developerVelocity) Tags() *[]string {
-	return nil
+	// And what about for the platform devs?
+	numPlatformDevs := len(platformDevs)
+	numCommitsByPlatformDevs := len(issueSearchResult.Issues) - numCommitsByAppDevs
+	platformDevVelocity := float64(numCommitsByPlatformDevs) / float64(numPlatformDevs)
+	ret = append(ret, &models.Metric{
+		Name:  name,
+		Value: platformDevVelocity,
+		Tags:  &[]string{"platform developers"},
+	})
+	return ret, nil
 }
 
 func isFromPlatformDeveloper(issue *github.Issue, platformDevs []*github.User) bool {
