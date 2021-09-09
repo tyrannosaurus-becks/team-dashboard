@@ -13,6 +13,13 @@ import (
 func Run(config *models.Config) error {
 	allDashboards := dashboards.All(config)
 	allMetrics := metrics.All(config)
+
+	log.Println("sending metrics")
+	if err := runOnce(allDashboards, allMetrics); err != nil {
+		log.Println(fmt.Sprintf("error: %s", err))
+	}
+	log.Println("send finished")
+
 	ticker := time.NewTicker(time.Hour)
 	for {
 		select {
