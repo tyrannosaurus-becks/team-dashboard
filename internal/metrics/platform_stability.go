@@ -2,12 +2,12 @@ package metrics
 
 import (
 	"fmt"
-	"github.com/tyrannosaurus-becks/team-dashboard/internal/metrics/util"
 	"log"
 	"net/url"
 	"time"
 
 	"github.com/tyrannosaurus-becks/team-dashboard/internal/clients"
+	"github.com/tyrannosaurus-becks/team-dashboard/internal/metrics/util"
 	"github.com/tyrannosaurus-becks/team-dashboard/internal/models"
 )
 

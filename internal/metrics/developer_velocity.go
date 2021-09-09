@@ -2,11 +2,11 @@ package metrics
 
 import (
 	"context"
-	"github.com/tyrannosaurus-becks/team-dashboard/internal/metrics/util"
 	"strings"
 	"time"
 
 	"github.com/google/go-github/v38/github"
+	"github.com/tyrannosaurus-becks/team-dashboard/internal/metrics/util"
 	"github.com/tyrannosaurus-becks/team-dashboard/internal/models"
 	"golang.org/x/oauth2"
 )
