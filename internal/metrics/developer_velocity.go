@@ -2,6 +2,7 @@ package metrics
 
 import (
 	"context"
+	"github.com/tyrannosaurus-becks/team-dashboard/internal/metrics/util"
 	"strings"
 	"time"
 
@@ -36,8 +37,8 @@ func (s *developerVelocity) Name() string {
 func (s *developerVelocity) Value() (float64, error) {
 	// How many PRs were merged 1-2 days ago?
 	now := time.Now().UTC()
-	dayBeforeYesterday := now.Add(-48 * time.Hour).Format(yyyymmdd)
-	yesterday := now.Add(-24 * time.Hour).Format(yyyymmdd)
+	dayBeforeYesterday := now.Add(-48 * time.Hour).Format(util.YYYYMMDD)
+	yesterday := now.Add(-24 * time.Hour).Format(util.YYYYMMDD)
 
 	q := strings.ReplaceAll(query, "$day_before_yesterday", dayBeforeYesterday)
 	q = strings.ReplaceAll(q, "$yesterday", yesterday)

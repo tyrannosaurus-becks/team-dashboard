@@ -17,5 +17,6 @@ func (s *securityCheckCoverage) Name() string {
 
 func (s *securityCheckCoverage) Value() (float64, error) {
 	// TODO
+	// https://docs.github.com/en/rest/reference/apps
 	return 0, nil
 }
