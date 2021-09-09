@@ -38,6 +38,7 @@ func (d *datadog) Send(metrics []models.Metric) error {
 		if err != nil {
 			return err
 		}
+		// TODO can we tag the metrics with the day they're for?
 		if _, _, err := d.apiClient.MetricsApi.SubmitMetrics(d.ctx, *dd.NewMetricsPayload(
 			[]dd.Series{*dd.NewSeries("platform.dashboard."+metric.Name(), [][]float64{
 				{toDatadogTime(now), value},
