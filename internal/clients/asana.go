@@ -8,7 +8,10 @@ import (
 	"net/url"
 )
 
-const baseURL = "https://app.asana.com/api/1.0/"
+const (
+	baseURL = "https://app.asana.com/api/1.0/"
+	limit   = 20
+)
 
 type Asana struct {
 	PersonalAccessToken string
@@ -19,6 +22,7 @@ func (a *Asana) SearchTasks(workspaceGid string, queryParams url.Values) ([]*Tas
 	endpoint := fmt.Sprintf("workspaces/%s/tasks/search", workspaceGid)
 
 	var tasks []*Task
+	queryParams.Add("limit", fmt.Sprintf("%d", limit))
 	u := getUrl(endpoint) + "?" + queryParams.Encode()
 	for {
 		resp := &struct {

@@ -19,5 +19,6 @@ func (s *developerSatisfaction) Value() (float64, error) {
 	// TODO
 	// This will look in Google sheets for the present result of the survey
 	// on whether we're a world class team.
+	// Should I be scraping Glassdoor for this?
 	return 0, nil
 }
