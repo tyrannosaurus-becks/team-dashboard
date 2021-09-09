@@ -53,7 +53,7 @@ func (v *DeveloperVelocity) Calculate() ([]*models.Metric, error) {
 	}
 
 	// How many commits were NOT made by platform developers?
-	numCommitsByAppDevs := len(issueSearchResult.Issues)
+	numCommitsByAppDevs := *issueSearchResult.Total
 	for _, issue := range issueSearchResult.Issues {
 		if isFromPlatformDeveloper(issue, platformDevs) {
 			numCommitsByAppDevs--
@@ -79,7 +79,7 @@ func (v *DeveloperVelocity) Calculate() ([]*models.Metric, error) {
 
 	// And what about for the platform devs?
 	numPlatformDevs := len(platformDevs)
-	numCommitsByPlatformDevs := len(issueSearchResult.Issues) - numCommitsByAppDevs
+	numCommitsByPlatformDevs := *issueSearchResult.Total - numCommitsByAppDevs
 	platformDevVelocity := float64(numCommitsByPlatformDevs) / float64(numPlatformDevs)
 	ret = append(ret, &models.Metric{
 		Name:  name,

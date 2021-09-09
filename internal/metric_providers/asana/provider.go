@@ -28,7 +28,7 @@ func (m *MetricProvider) Calculate() ([]*models.Metric, error) {
 	}
 	ret = append(ret, calculated...)
 
-	calculated, err = m.highRiskSecurityIssues.Calculate()
+	calculated, err = m.bugsThisWeek.Calculate()
 	if err != nil {
 		return nil, err
 	}
