@@ -37,7 +37,7 @@ func Run(config *models.Config) error {
 
 func runOnce(allDashboards []models.Dashboard, allMetricProviders []models.MetricProvider) error {
 	// Retrieve and cache all the metrics to be sent.
-	var allMetrics []models.Metric
+	var allMetrics []*models.Metric
 	for _, metricProvider := range allMetricProviders {
 		metrics, err := metricProvider.Calculate()
 		if err != nil {

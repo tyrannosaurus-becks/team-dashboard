@@ -31,7 +31,7 @@ type datadog struct {
 	apiClient *dd.APIClient
 }
 
-func (d *datadog) Send(metrics []models.Metric) error {
+func (d *datadog) Send(metrics []*models.Metric) error {
 	now := time.Now().UTC()
 	for _, metric := range metrics {
 		series := *dd.NewSeries("platform.dashboard."+metric.Name, [][]float64{
