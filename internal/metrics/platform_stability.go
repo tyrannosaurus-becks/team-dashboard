@@ -49,3 +49,7 @@ func (s *platformStability) Value() (float64, error) {
 	}
 	return float64(len(tasks)), nil
 }
+
+func (s *platformStability) Tags() *[]string {
+	return nil
+}

@@ -22,3 +22,7 @@ func (s *developerSatisfaction) Value() (float64, error) {
 	// Should I be scraping Glassdoor for this?
 	return 0, nil
 }
+
+func (s *developerSatisfaction) Tags() *[]string {
+	return nil
+}
