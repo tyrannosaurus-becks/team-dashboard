@@ -74,7 +74,7 @@ func (v *DeveloperVelocity) Calculate() ([]*models.Metric, error) {
 	ret = append(ret, &models.Metric{
 		Name:  name,
 		Value: appDevVelocity,
-		Tags:  &[]string{"application developers"},
+		Tags:  &[]string{"application developers", dayBeforeYesterday},
 	})
 
 	// And what about for the platform devs?
@@ -84,7 +84,7 @@ func (v *DeveloperVelocity) Calculate() ([]*models.Metric, error) {
 	ret = append(ret, &models.Metric{
 		Name:  name,
 		Value: platformDevVelocity,
-		Tags:  &[]string{"platform developers"},
+		Tags:  &[]string{"platform developers", dayBeforeYesterday},
 	})
 	return ret, nil
 }
