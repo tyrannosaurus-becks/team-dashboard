@@ -16,4 +16,10 @@ type Config struct {
 	AsanaPlatformTeamGid     string `envconfig:"asana_platform_team_gid"`
 	AsanaTypeFieldGid        string `envconfig:"asana_type_field_gid"`
 	AsanaPriorityFieldGid    string `envconfig:"asana_priority_field_gid"`
+
+	// CSVs.
+	// The absolute path to any local CSVs to read as a comma-separated string.
+	// Ex. "/Users/beccapetrin/go/team-dashboard.csv,/Users/beccapetrin.com.csv"
+	// TODO how will this work with envconfig?
+	PathsToLocalCSVs map[CSVType]string `envconfig:"paths_to_local_csvs"`
 }
