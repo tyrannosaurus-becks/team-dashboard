@@ -1,7 +1,6 @@
 package local_csv
 
 import (
-	"fmt"
 	"os"
 	"strings"
 	"testing"
@@ -24,5 +23,7 @@ func TestCalculate(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	fmt.Println(metrics)
+	if len(metrics) != 7 {
+		t.Fatalf("expected %d, received %d", 7, len(metrics))
+	}
 }

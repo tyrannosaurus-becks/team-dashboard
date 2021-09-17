@@ -11,6 +11,6 @@ func All(config *models.Config) []models.MetricProvider {
 	return []models.MetricProvider{
 		asana.NewMetricProvider(config),
 		github.NewMetricProvider(config),
-		local_csv.NewMetricProvider(config),
+		local_csv.NewMetricProvider(config.PathsToLocalCSVs),
 	}
 }
