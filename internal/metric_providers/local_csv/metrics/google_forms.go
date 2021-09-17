@@ -30,7 +30,8 @@ func (f *GoogleFormParser) Calculate() ([]*models.Metric, error) {
 	r := csv.NewReader(csvFile)
 	rowIdx := 0
 	columnIdxToColumnName := make(map[int]string)
-	anonymizedResponses := make(map[string][]int)
+	anonymizedResponses := make(map[string][]float64)
+	inFinalRow := false
 	for {
 		record, err := r.Read()
 		if err == io.EOF {
@@ -40,29 +41,30 @@ func (f *GoogleFormParser) Calculate() ([]*models.Metric, error) {
 			return nil, err
 		}
 		for columnIdx, cellValue := range record {
-			if columnIdx == 0 && cellValue == "" {
-				// For normal responses, there's always a timestamp. The last
-				// row has no timestamp, but only aggregations. We don't want
-				// to grab that one.
-				break
-			}
-			// We're in the header row, build the header cellValue to its index.
-			if rowIdx == 0 {
+			switch {
+			case rowIdx == 0:
+				// We're in the header row, build the header cellValue to its index.
 				columnIdxToColumnName[columnIdx] = cellValue
-			} else {
-				// We're in a content row and simply want to capture its value,
-				// if it's quantitative.
-				num, err := strconv.Atoi(cellValue)
+			case (columnIdx == 0 && cellValue == "") || inFinalRow:
+				// For normal responses, there's always a timestamp. The last
+				// row has no timestamp, but only aggregations. We're in the last
+				// row.
+				inFinalRow = true
+				num, err := strconv.ParseFloat(cellValue, 64)
 				if err != nil {
-					// It's not an int.
+					// It's not a decimal.
 					continue
 				}
 				columnName := columnIdxToColumnName[columnIdx]
 				values, ok := anonymizedResponses[columnName]
 				if !ok {
-					values = []int{}
+					values = []float64{}
 				}
 				anonymizedResponses[columnName] = append(values, num)
+			default:
+				// We're in one of the individual data rows. We only want the
+				// aggregation at the end.
+				continue
 			}
 		}
 		rowIdx++
@@ -71,7 +73,7 @@ func (f *GoogleFormParser) Calculate() ([]*models.Metric, error) {
 		for _, value := range values {
 			metrics = append(metrics, &models.Metric{
 				Name:  fieldName,
-				Value: float64(value), // TODO each one of these isn't a gauge. What is it?
+				Value: value,
 			})
 		}
 	}
