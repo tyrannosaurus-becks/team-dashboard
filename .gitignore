@@ -18,7 +18,7 @@ vendor/
 .idea
 
 # Config
-config
+config/
 
 # Local file output
 metrics.csv

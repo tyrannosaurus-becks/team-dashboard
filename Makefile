@@ -1,3 +1,6 @@
+setup:
+	go mod vendor
+
 fmt:
 	go fmt ./...
 
