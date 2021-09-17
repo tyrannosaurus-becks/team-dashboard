@@ -1,7 +1,7 @@
 package models
 
-type CSVType int
+type CSVType string
 
 const (
-	GoogleForms CSVType = iota
+	GoogleForms CSVType = "google-forms"
 )

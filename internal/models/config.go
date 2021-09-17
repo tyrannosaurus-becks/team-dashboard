@@ -20,6 +20,5 @@ type Config struct {
 	// CSVs.
 	// The absolute path to any local CSVs to read as a comma-separated string.
 	// Ex. "/Users/beccapetrin/go/team-dashboard.csv,/Users/beccapetrin.com.csv"
-	// TODO how will this work with envconfig?
 	PathsToLocalCSVs map[CSVType]string `envconfig:"paths_to_local_csvs"`
 }
