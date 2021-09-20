@@ -83,7 +83,7 @@ func (f *GoogleFormParser) Calculate() ([]*models.Metric, error) {
 
 func normalize(fieldName string) string {
 	fieldName = strings.ToLower(fieldName)
-	fieldName = strings.ReplaceAll(fieldName, " ", "-")
+	fieldName = strings.ReplaceAll(fieldName, " ", "_")
 	fieldName = strings.ReplaceAll(fieldName, ".", "")
 	fieldName = strings.ReplaceAll(fieldName, ",", "")
 	fieldName = strings.ReplaceAll(fieldName, "'", "")
