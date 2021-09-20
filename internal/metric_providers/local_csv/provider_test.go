@@ -16,7 +16,7 @@ func TestCalculate(t *testing.T) {
 	flag := "team-dashboard"
 	parts := strings.Split(wd, flag)
 	m := map[models.CSVType]string{
-		models.GoogleForms: parts[0] + flag + "/internal/metric_providers/local_csv/fixtures/velocity.csv",
+		models.GoogleForms: parts[0] + flag + "/internal/metric_providers/local_csv/fixtures/velocity-05-26-21.csv",
 	}
 	mp := NewMetricProvider(m)
 	metrics, err := mp.Calculate()
