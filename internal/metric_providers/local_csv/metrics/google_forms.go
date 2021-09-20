@@ -5,6 +5,7 @@ import (
 	"io"
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/tyrannosaurus-becks/team-dashboard/internal/models"
 )
@@ -72,10 +73,20 @@ func (f *GoogleFormParser) Calculate() ([]*models.Metric, error) {
 	for fieldName, values := range anonymizedResponses {
 		for _, value := range values {
 			metrics = append(metrics, &models.Metric{
-				Name:  fieldName,
+				Name:  "survey." + normalize(fieldName),
 				Value: value,
 			})
 		}
 	}
 	return metrics, nil
+}
+
+func normalize(fieldName string) string {
+	fieldName = strings.ToLower(fieldName)
+	fieldName = strings.ReplaceAll(fieldName, " ", "-")
+	fieldName = strings.ReplaceAll(fieldName, ".", "")
+	fieldName = strings.ReplaceAll(fieldName, ",", "")
+	fieldName = strings.ReplaceAll(fieldName, "'", "")
+	fieldName = strings.ReplaceAll(fieldName, "?", "")
+	return fieldName
 }
