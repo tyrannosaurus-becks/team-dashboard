@@ -1,0 +1,16 @@
+Timestamp,I spend most of my time working on...,I spend most of my time working on the { X } team.,Our builds are fast.,Our codebase is high quality and easy to understand.,{ X } feels brittle.,"When I push code, I am confident it will work the way it did on my local.",We're in a good place with our test coverage.,"If I didn't have to deal with { X }, I'd be much more productive.",It's easy to run an experiment.,{ X } is my biggest obstacle to achieving flow state.,It's easy to use a feature flag?,It's easy to measure the impact of a feature I released.,I spend the right amount of time in meetings.,I wish you asked me about...
+8/27/2021 7:21:51,Platform,Platform,2,3,Deployments,4,2,N/A,3,N/A,5,4,4,
+8/27/2021 8:02:05,Native mobile,Camper Core,3,2,yes,4,2,non updated code,1,,3,3,2,
+8/27/2021 8:21:16,Native mobile,Host Growth,4,4,"Camper ""discover"", critical past testing",5,3,Figma designs without messkit styling,2,fragmented schedules,5,4,4,Pocketknife UX polish
+8/27/2021 10:21:39,Platform,Platform,4,4,test harness,5,1,fragmented time,2,fragmented time,4,4,3,automation
+8/30/2021 9:18:45,Front end,Camper Core,3,2,"*.js.coffee, /discover/*",4,3,"coffeescript code, rebasing after avo branch merges",4,,4,2,3,
+8/30/2021 9:18:48,Platform,Platform,1,3,,5,2,,3,,3,4,5,
+8/30/2021 9:20:16,Front end,Host Growth,4,4,Review apps.,4,3,Lookalise process can be better.,3,Fragmented time due to meetings.,4,5,2,"1:1 collaboration: frequency, quality and if I'm pairing with the right people."
+8/30/2021 9:22:15,Front end,Host Core,2,3,coffeescript/backbone/eco files,4,4,,2,,4,2,4,
+8/30/2021 9:26:04,Front end,Camper Core,3,4,legacy FE code,4,3,backbone,3,meetings,4,3,2,
+8/30/2021 9:29:18,Back end,Host Core,3,2,,3,2,meetings,2,scattered meetings,3,2,2,
+8/30/2021 10:13:26,Native mobile,Host Growth,3,4,,5,1,,1,,3,3,4,
+8/30/2021 10:43:59,Back end,Camper Core,3,3,"Legacy front end code, esp if you have to change something.",3,3,Slow builds and time to push to review apps.,4,Slow local environment when developing on hipcamp reserve.,4,4,4,
+9/17/2021 15:37:27,Native mobile,,3,4,"Deep linking, type safety, QA and testing",4,1,staging instability,2,,4,3,3,
+9/17/2021 16:23:52,Platform,Platform,3,4,Global changes,4,4,Flaky CI/CD,3,Flaky CI/CD,5,3,4,Ease of troubleshooting issues.
+,,,2.93,3.29,,4.14,2.43,,2.50,,3.93,3.29,3.29,
