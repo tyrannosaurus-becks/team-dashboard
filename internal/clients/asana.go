@@ -101,7 +101,8 @@ type ObjectMetadata struct {
 }
 
 type Task struct {
-	Projects []*ObjectMetadata `json:"projects"`
+	CustomFields []map[string]interface{} `json:"custom_fields"`
+	Projects     []*ObjectMetadata        `json:"projects"`
 }
 
 type Project struct {
