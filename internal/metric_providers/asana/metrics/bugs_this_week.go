@@ -11,11 +11,6 @@ import (
 
 const name = "num-bugs-opened-this-week"
 
-var timeFormat = "2006-01-02"
-
-// The last 7 days.
-var window = -7 * 24 * time.Hour
-
 func NewBugsThisWeek(config *models.Config) *BugsThisWeek {
 	return &BugsThisWeek{
 		config: config,
@@ -34,7 +29,7 @@ func (s *BugsThisWeek) Calculate() ([]*models.Metric, error) {
 	// Find all the bugs opened in the last time period.
 	queryParams := &url.Values{}
 	queryParams.Add(fmt.Sprintf("custom_fields.%s.value", s.config.AsanaTypeFieldGid), "1184099641533292") // Bug.
-	queryParams.Add("created_on.after", time.Now().UTC().Add(window).Format(timeFormat))
+	queryParams.Add("created_on.after", time.Now().UTC().Add(lastSevenDays).Format(iso8601))
 	bugs, err := s.client.SearchTasks(s.config.AsanaWorkspaceGid, *queryParams)
 	if err != nil {
 		return nil, err
