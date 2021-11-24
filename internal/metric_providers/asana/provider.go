@@ -7,22 +7,22 @@ import (
 
 func NewMetricProvider(config *models.Config) *MetricProvider {
 	return &MetricProvider{
-		config:             config,
-		bugsThisWeek:       metrics.NewBugsThisWeek(config),
-		openSecurityIssues: metrics.NewSecurityIssues(config),
+		config:         config,
+		bugsThisWeek:   metrics.NewBugsThisWeek(config),
+		securityIssues: metrics.NewSecurityIssues(config),
 	}
 }
 
 type MetricProvider struct {
-	config             *models.Config
-	bugsThisWeek       *metrics.BugsThisWeek
-	openSecurityIssues *metrics.SecurityIssues
+	config         *models.Config
+	bugsThisWeek   *metrics.BugsThisWeek
+	securityIssues *metrics.SecurityIssues
 }
 
 func (m *MetricProvider) Calculate() ([]*models.Metric, error) {
 	var ret []*models.Metric
 
-	calculated, err := m.openSecurityIssues.Calculate()
+	calculated, err := m.securityIssues.Calculate()
 	if err != nil {
 		return nil, err
 	}
