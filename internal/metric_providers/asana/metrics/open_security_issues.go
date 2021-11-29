@@ -60,7 +60,13 @@ func (c *SecurityIssues) newlyCreated(since time.Duration, metricName string) ([
 		return nil, err
 	}
 
-	tasksByPriority := make(map[string][]*clients.ObjectMetadata)
+	tasksByPriority := map[string][]*clients.ObjectMetadata{
+		"P0":       nil,
+		"P1":       nil,
+		"P2":       nil,
+		"P3":       nil,
+		noPriority: nil,
+	}
 	for _, taskMetadata := range allTasks {
 		task, err := c.client.GetTask(taskMetadata.GID)
 		if err != nil {
