@@ -88,6 +88,7 @@ func (c *SecurityIssues) newlyCreated(since time.Duration, metricName string) ([
 			}
 		}
 		if !pxValExists {
+			log.Infof("%s is a security issue that lacks a PX")
 			tasksByPriority[noPriority] = append(tasksByPriority[noPriority], taskMetadata)
 		}
 	}
