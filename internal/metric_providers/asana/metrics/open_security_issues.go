@@ -5,6 +5,7 @@ import (
 	"net/url"
 	"time"
 
+	log "github.com/sirupsen/logrus"
 	"github.com/tyrannosaurus-becks/team-dashboard/internal/clients"
 	"github.com/tyrannosaurus-becks/team-dashboard/internal/models"
 )
@@ -59,6 +60,7 @@ func (c *SecurityIssues) newlyCreated(since time.Duration, metricName string) ([
 	if err != nil {
 		return nil, err
 	}
+	log.Debugf("for %s, in the last %d days, found %d tasks", metricName, since.Hours()/24, len(allTasks))
 
 	tasksByPriority := map[string][]*clients.ObjectMetadata{
 		"P0":       nil,

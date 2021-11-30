@@ -1,10 +1,9 @@
 package internal
 
 import (
-	"fmt"
-	"log"
 	"time"
 
+	log "github.com/sirupsen/logrus"
 	"github.com/tyrannosaurus-becks/team-dashboard/internal/dashboards"
 	"github.com/tyrannosaurus-becks/team-dashboard/internal/metric_providers"
 	"github.com/tyrannosaurus-becks/team-dashboard/internal/models"
@@ -15,22 +14,22 @@ func Run(config *models.Config) error {
 	allMetricProviders := metric_providers.All(config)
 
 	// Run at startup.
-	log.Println("sending metrics")
+	log.Info("sending metrics")
 	if err := runOnce(allDashboards, allMetricProviders); err != nil {
-		log.Println(fmt.Sprintf("error: %s", err))
+		log.Error(err)
 	}
-	log.Println("send finished")
+	log.Info("send finished")
 
 	// Then run every hour.
 	ticker := time.NewTicker(time.Hour)
 	for {
 		select {
 		case <-ticker.C:
-			log.Println("sending metrics")
+			log.Info("sending metrics")
 			if err := runOnce(allDashboards, allMetricProviders); err != nil {
-				log.Println(fmt.Sprintf("error: %s", err))
+				log.Error(err)
 			}
-			log.Println("send finished")
+			log.Info("send finished")
 		}
 	}
 }

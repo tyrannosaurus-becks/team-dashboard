@@ -3,11 +3,11 @@ package main
 import (
 	"flag"
 	"fmt"
-	"log"
 	"net/url"
 	"time"
 
 	"github.com/kelseyhightower/envconfig"
+	log "github.com/sirupsen/logrus"
 	"github.com/tyrannosaurus-becks/team-dashboard/internal/clients"
 	"github.com/tyrannosaurus-becks/team-dashboard/internal/models"
 )
@@ -51,7 +51,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Printf("%d Platform tasks were created between %s and %s.", len(newTasks), *startFlag, *endFlag)
+	log.Infof("%d Platform tasks were created between %s and %s.", len(newTasks), *startFlag, *endFlag)
 
 	var numTasksWithDays int
 	var totalDaysEstimated float64
@@ -71,7 +71,7 @@ func main() {
 
 	// What's the average number of days per task?
 	avgDaysPerTask := totalDaysEstimated / float64(numTasksWithDays)
-	log.Printf("%f was the average day per task", avgDaysPerTask)
+	log.Infof("%f was the average day per task", avgDaysPerTask)
 }
 
 // The int returned will be nil if a number of days isn't given.
